@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>StudyOrbit</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<script>
+(function(){try{var t=localStorage.getItem('so-theme')||'system';var d=t==='dark'||(t==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.dataset.theme=d?'dark':'light';}catch(e){}})();
+</script>
+<style>
+:root{--bg:#F5F4FF;--surface:#FFFFFF;--text:#1B1B3A;--muted:#55557A;--primary:#2B2D8F;--on-primary:#FFFFFF;--accent:#D1660A;--line:#DAD8F5;color-scheme:light}
+:root[data-theme=dark]{--bg:#14142B;--surface:#1E1E3F;--text:#ECEBFF;--muted:#B4B3DC;--primary:#A5A7FF;--on-primary:#14142B;--accent:#FFBE55;--line:#35356B;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;transition:background .3s,color .3s}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.logo{display:block}
+/* splash */
+#splash{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:var(--bg);text-align:center;transition:opacity .4s}
+#splash.hide{opacity:0}
+#splash .logo{width:144px;height:144px;animation:pop .9s cubic-bezier(.2,.8,.2,1) both}
+#splash .sat{transform-origin:128px 128px;animation:orbit 2.5s ease-in-out both}
+#splash h1{margin:12px 0 0;font-size:2rem;letter-spacing:.02em;animation:rise .8s .3s both}
+#splash p{margin:0;color:var(--muted);animation:rise .8s .45s both}
+.bar{width:220px;height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin-top:20px}
+.bar i{display:block;height:100%;width:0;background:var(--primary);animation:fill 2.5s linear forwards}
+@keyframes pop{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes orbit{from{transform:rotate(-320deg)}to{transform:none}}
+@keyframes fill{to{width:100%}}
+@media (prefers-reduced-motion:reduce){#splash *{animation-duration:.01s!important}.bar i{animation:none;width:100%}}
+/* main */
+header{display:flex;align-items:center;gap:12px;padding:12px 24px;background:var(--surface);border-bottom:1px solid var(--line)}
+header .logo{width:36px;height:36px}
+header b{font-size:1.15rem;flex:1}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{background:none;border:0;padding:6px 12px}
+.seg button[aria-pressed=true]{background:var(--primary);color:var(--on-primary)}
+.btn{background:var(--primary);color:var(--on-primary);border:0;border-radius:10px;padding:8px 16px;font-weight:600}
+.btn.ghost{background:none;color:var(--primary);border:1px solid var(--primary)}
+main{max-width:860px;margin:0 auto;padding:24px;display:grid;gap:16px;grid-template-columns:1fr 1fr}
+main h2{grid-column:1/-1;margin:0;font-size:1.5rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px}
+.card h3{margin:0 0 12px;font-size:1rem;color:var(--muted);font-weight:600}
+.time{font-size:3.2rem;font-weight:700;font-variant-numeric:tabular-nums;color:var(--primary)}
+ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+li label{display:flex;align-items:center;gap:10px}
+li small{margin-left:auto;color:var(--muted)}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--primary)}
+@media(max-width:640px){main{grid-template-columns:1fr}}
+/* about */
+dialog{background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:20px;padding:28px;max-width:380px;text-align:center}
+dialog::backdrop{background:rgba(10,10,30,.55)}
+dialog .logo{width:96px;height:96px;margin:0 auto 8px}
+dialog h2{margin:0}dialog p{margin:4px 0;color:var(--muted)}
+dialog dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;text-align:left;margin:16px 0;font-size:.95rem}
+dialog dt{color:var(--muted)}dialog dd{margin:0}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="logo" viewBox="0 0 256 256"><path d="M217.3 105.7 A92 92 0 1 1 165.4 44.0" fill="none" stroke="var(--primary)" stroke-width="14" stroke-linecap="round"/><path d="M104 92a8 8 0 0 1 8-8h32a8 8 0 0 1 8 8v80l-24-17-24 17z" fill="var(--primary)"/><circle class="sat" cx="198.5" cy="68.9" r="15" fill="var(--accent)"/></symbol></svg>
+
+<section id="splash" aria-label="Заставка">
+  <svg class="logo" aria-hidden="true"><use href="#logo"/></svg>
+  <h1>StudyOrbit</h1>
+  <p>Планувальник навчання студента</p>
+  <p id="sp-meta"></p>
+  <div class="bar"><i></i></div>
+</section>
+
+<div id="app" hidden>
+  <header>
+    <svg class="logo" aria-hidden="true"><use href="#logo"/></svg>
+    <b>StudyOrbit</b>
+    <div class="seg" role="group" aria-label="Тема оформлення">
+      <button data-t="light" aria-pressed="false">Світла</button>
+      <button data-t="dark" aria-pressed="false">Темна</button>
+      <button data-t="system" aria-pressed="false">Авто</button>
+    </div>
+    <button class="btn ghost" id="about-open">Про застосунок</button>
+  </header>
+  <main>
+    <h2>Сьогодні</h2>
+    <section class="card"><h3>Фокус-сесія</h3>
+      <div class="time" id="time" aria-live="off">25:00</div>
+      <button class="btn" id="go">Старт</button>
+    </section>
+    <section class="card"><h3>Найближчі дедлайни</h3>
+      <ul>
+        <li><label><input type="checkbox" checked> Практична з UI/UX <small>сьогодні</small></label></li>
+        <li><label><input type="checkbox"> Лабораторна з БД <small>пʼятниця</small></label></li>
+        <li><label><input type="checkbox"> Реферат з філософії <small>наст. тиждень</small></label></li>
+      </ul>
+    </section>
+  </main>
+</div>
+
+<dialog id="about" aria-labelledby="ab-h">
+  <svg class="logo" aria-hidden="true"><use href="#logo"/></svg>
+  <h2 id="ab-h">StudyOrbit</h2>
+  <p>Планувальник навчання студента</p>
+  <dl>
+    <dt>Версія</dt><dd id="ab-v"></dd>
+    <dt>Автор</dt><dd id="ab-a"></dd>
+    <dt>Рік</dt><dd id="ab-y"></dd>
+    <dt>Стек</dt><dd>HTML · CSS · JavaScript</dd>
+  </dl>
+  <button class="btn" id="about-close">Закрити</button>
+</dialog>
+
+<script>
+const INFO={version:"1.0.0",author:"Ляшенко К.",year:2026};
+const $=s=>document.querySelector(s), sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const root=document.documentElement, mq=matchMedia('(prefers-color-scheme: dark)');
+let mode='system';
+try{mode=localStorage.getItem('so-theme')||'system'}catch(e){}
+function applyTheme(){
+  root.dataset.theme=(mode==='dark'||(mode==='system'&&mq.matches))?'dark':'light';
+  document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===mode));
+}
+document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{mode=b.dataset.t;try{localStorage.setItem('so-theme',mode)}catch(e){}applyTheme()});
+mq.addEventListener('change',applyTheme);applyTheme();
+
+$('#sp-meta').textContent=`Версія ${INFO.version} · ${INFO.author} · ${INFO.year}`;
+$('#ab-v').textContent=INFO.version;$('#ab-a').textContent=INFO.author;$('#ab-y').textContent=INFO.year;
+$('#about-open').onclick=()=>$('#about').showModal();
+$('#about-close').onclick=()=>$('#about').close();
+
+let left=1500,timer=null;
+const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+$('#go').onclick=()=>{
+  if(timer){clearInterval(timer);timer=null;$('#go').textContent='Старт';return}
+  $('#go').textContent='Пауза';
+  timer=setInterval(()=>{left=Math.max(0,left-1);$('#time').textContent=fmt(left);if(!left){clearInterval(timer);timer=null;$('#go').textContent='Старт'}},1000);
+};
+
+async function loadData(){await sleep(300)} // місце для реальної ініціалізації
+async function boot(){
+  await Promise.all([loadData(),sleep(2500)]);   // неблокуючий перехід: async/await
+  $('#splash').classList.add('hide');
+  await sleep(400);
+  $('#splash').hidden=true;$('#app').hidden=false;
+}
+boot();
+</script>
+</body>
+</html>
