@@ -1,0 +1,28 @@
+# Операційна система
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Редактори та IDE
+.vscode/
+.idea/
+.vs/
+*.suo
+*.user
+
+# Залежності та збірка (на майбутні лабораторні)
+node_modules/
+dist/
+build/
+bin/
+obj/
+out/
+
+# Логи та тимчасові файли
+*.log
+*.tmp
+*.bak
+~$*
+
+# Секрети
+.env
